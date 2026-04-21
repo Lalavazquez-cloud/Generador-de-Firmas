@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Firmas - Botiax</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+        .config-panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 30px; width: 450px; }
+        .config-panel h2 { margin-top: 0; color: #2c2664; text-align: center; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+        input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        
+        /* Estilos de la Firma */
+        #signature-preview { background: white; padding: 25px; border: 1px solid #ddd; border-radius: 4px; }
+        
+        .signature-table { border-collapse: collapse; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; }
+        .logo-cell { padding-right: 25px; vertical-align: middle; }
+        .logo-img { width: 200px; display: block; }
+        
+        .divider { border-left: 2px solid #2c2664; padding-left: 20px; vertical-align: middle; min-width: 250px; }
+        
+        .name { color: #2c2664; font-size: 18px; font-weight: bold; margin: 0; line-height: 1.2; }
+        .job { color: #444; font-size: 15px; margin: 2px 0 8px 0; }
+        .contact { color: #2c2664; font-size: 13px; text-decoration: none; display: block; margin-bottom: 2px; }
+        .website { color: #2c2664; font-size: 13px; text-decoration: none; font-weight: bold; display: block; margin-top: 5px; }
+
+        .btn-copy { margin-top: 20px; padding: 12px 25px; background-color: #dd9916; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-copy:hover { background-color: #2c2664; }
+    </style>
+</head>
+<body>
+
+    <div class="config-panel">
+        <h2>Firma Corporativa Botiax</h2>
+        <div class="input-group">
+            <label>Nombre Completo</label>
+            <input type="text" id="inName" placeholder="Ej: Valeria Espinosa" oninput="updateSignature()">
+        </div>
+        <div class="input-group">
+            <label>Puesto / Cargo</label>
+            <input type="text" id="inJob" placeholder="Ej: Ejecutiva Comercial" oninput="updateSignature()">
+        </div>
+        <div class="input-group">
+            <label>Correo Electrónico</label>
+            <input type="email" id="inEmail" placeholder="usuario@botiax.com" oninput="updateSignature()">
+        </div>
+        <div class="input-group">
+            <label>Teléfono (Opcional)</label>
+            <input type="text" id="inPhone" placeholder="Ej: +54 9 11 1234 5678" oninput="updateSignature()">
+        </div>
+        <div class="input-group">
+            <label>URL LinkedIn (Opcional)</label>
+            <input type="text" id="inLi" placeholder="Ej: linkedin.com/in/usuario" oninput="updateSignature()">
+        </div>
+    </div>
+
+    <div id="signature-preview">
+        <table class="signature-table">
+            <tr>
+                <td class="logo-cell">
+                    <img src="botiaxazul12.png" alt="Botiax" class="logo-img">
+                </td>
+                <td class="divider">
+                    <div id="outName" class="name">Nombre Apellido</div>
+                    <div id="outJob" class="job">Cargo</div>
+                    
+                    <a id="outEmailLink" href="#" class="contact">
+                        <span id="outEmail">email@botiax.com</span>
+                    </a>
+                    
+                    <div id="outPhone" class="contact" style="display:none;"></div>
+                    
+                    <a id="outLiLink" href="#" class="contact" style="display:none; color: #0077b5; font-weight: bold;">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://botiax.com/" class="website">www.botiax.com</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <button class="btn-copy" onclick="copySignature()">Copiar Firma</button>
+
+    <script>
+        function updateSignature() {
+            // Inputs
+            const name = document.getElementById('inName').value || "Nombre Apellido";
+            const job = document.getElementById('inJob').value || "Cargo";
+            const email = document.getElementById('inEmail').value || "email@botiax.com";
+            const phone = document.getElementById('inPhone').value;
+            const linkedin = document.getElementById('inLi').value;
+
+            // Outputs
+            document.getElementById('outName').innerText = name;
+            document.getElementById('outJob').innerText = job;
+            document.getElementById('outEmail').innerText = email;
+            document.getElementById('outEmailLink').href = "mailto:" + email;
+
+            // Lógica para Teléfono (Opcional)
+            const phoneDiv = document.getElementById('outPhone');
+            if(phone.trim() !== "") {
+                phoneDiv.innerText = phone;
+                phoneDiv.style.display = "block";
+            } else {
+                phoneDiv.style.display = "none";
+            }
+
+            // Lógica para LinkedIn (Opcional)
+            const liLink = document.getElementById('outLiLink');
+            if(linkedin.trim() !== "") {
+                let url = linkedin.startsWith('http') ? linkedin : 'https://' + linkedin;
+                liLink.href = url;
+                liLink.style.display = "block";
+            } else {
+                liLink.style.display = "none";
+            }
+        }
+
+        function copySignature() {
+            const range = document.createRange();
+            range.selectNode(document.getElementById('signature-preview'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            
+            try {
+                document.execCommand('copy');
+                alert('¡Copiado! Pégalo en la configuración de firma de tu correo.');
+            } catch (err) {
+                alert('Error al copiar automáticamente. Por favor selecciona la firma y presiona Ctrl+C.');
+            }
+            window.getSelection().removeAllRanges();
+        }
+    </script>
+
+</body>
+</html>
